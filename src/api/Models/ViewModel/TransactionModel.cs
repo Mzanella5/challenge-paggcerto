@@ -29,12 +29,13 @@ namespace challengePaggcerto.src.api.Models.ViewModel
         [Display(Name = "lastFourCardDigits"), JsonRequired]
         public string? LastFourCardDigits { get; set; }
 
-        [Display(Name = "creditCard"), JsonRequired]
+        [Display(Name = "creditCard")]
         public CreditCardModel? CreditCard { get; set; }
 
         public Transaction Map()
         {
             return new Transaction{
+                Id = this.Id,
                 DateExecuted = this.DateExecuted,
                 AcquirerConfirm = this.AcquirerConfirm,
                 GrossValue = this.GrossValue,

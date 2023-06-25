@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using challengePaggcerto.src.api.Models.ResultModel;
 using challengePaggcerto.src.api.Models.ServiceModel;
 using challengePaggcerto.src.api.Models.ViewModel;
-using Microsoft.EntityFrameworkCore;
 
 namespace challengePaggcerto.src.api.Controllers
 {
@@ -41,21 +40,8 @@ namespace challengePaggcerto.src.api.Controllers
         public async Task<IActionResult> GetAllowedTransactions()
         {
             var transactions = await _transactionService.GetAllowedTransactionsAsync(_context);
-
             return new ListTransactionJson(transactions!);
         }
 
-        [HttpGet, Route("request-anticipations")]
-        public async Task<IActionResult> RequestAnticipation(ListTransactionModel transactionModel)
-        {
-            //for the best practice I need to take the data from the database using id of transaction but found some dificults
-            var result = await _transactionService.RequestAnticipation(_context,transactionModel.Map());
-            if(result)
-                return Ok(new { message = "Success: Done."});
-
-            return BadRequest(new { message = "Erro: Some problem happned while processing the request."});
-        }
-
     }
-
 }

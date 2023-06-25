@@ -58,7 +58,7 @@ namespace challengePaggcerto.src.api.Models.ServiceModel
         {
             try
             {
-                var tResult = await context.Transactions!.IncludeParcels().WhereTransactionId(id).FirstOrDefaultAsync();
+                var tResult = await context.Transactions!.IncludeParcels().IncludeAnticipations().WhereTransactionId(id).FirstOrDefaultAsync();
                 return tResult;
             }
             catch (Exception e)
@@ -72,7 +72,7 @@ namespace challengePaggcerto.src.api.Models.ServiceModel
             try
             {
                 ICollection<Transaction> transactions;
-                transactions = await context.Transactions!.WhereTransactionAllowed().ToListAsync();
+                transactions = await context.Transactions!.WhereTransactionAllowed().IncludeParcels().ToListAsync();
                 return transactions;
             }
             catch (Exception e)
@@ -83,42 +83,5 @@ namespace challengePaggcerto.src.api.Models.ServiceModel
             return null;
         }
 
-        public async Task<bool> RequestAnticipation(DataContext context, ICollection<Transaction> transactions) 
-        {
-            int changes = 0;
-            try{
-                
-                Anticipation anticipation = new Anticipation{
-                    RequestDate = DateTime.Now,
-                    AnticipatedRequiredValue = 0.0,
-                    AnticipatedValue = 0.0
-                };
-
-                foreach (Transaction t in transactions){
-                    if(!t.Anticipated)
-                        anticipation.AnticipatedRequiredValue += t.NetValue;                                                                
-                    else                  
-                        transactions.Remove(t);
-                                                      
-                }
-
-                foreach(Transaction t in transactions){
-                    t.Anticipated = true;
-                    t.Anticipation = anticipation;
-                }
-                context.UpdateRange(transactions);
-
-                context.Anticipations?.Add(anticipation);
-                changes = await context.SaveChangesAsync();
-
-                if(changes > transactions.Count)
-                    return true;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-            return false;
-        }
     }
 }

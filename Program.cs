@@ -12,8 +12,10 @@ builder.Services.AddDbContext<DataContext>(options => {
 
 builder.Services.AddControllers().AddNewtonsoftJson(options =>{
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-            });
-builder.Services.AddSingleton<TransactionService>();
+});
+
+builder.Services.AddTransient<TransactionService>();
+builder.Services.AddTransient<AnticipationService>();
 
 var app = builder.Build();
 
